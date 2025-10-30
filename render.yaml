@@ -1,21 +1,17 @@
-# render.yaml
-# ملف Render Blueprint مصحح لمشروع Node.js مع PostgreSQL
-
 services:
-  # 1. خدمة قاعدة البيانات (PostgreSQL)
+  # 1. خدمة قاعدة البيانات (PostgreSQL) - بسيطة وبدون إعدادات بناء
   - type: pserv
     name: restaurant-db
-    # ملاحظة: خطة "free" متاحة وقد تكون كافية للتطوير
-    # plan: standard 
-    # autoDeploy: false # هذا الحقل غير صالح لـ pserv، يتم التحكم به من الواجهة
-    
-  # 2. خدمة الويب (Backend + Frontend)
+    # لا تحتاج إلى أي حقول أخرى هنا، Render سيتكفل بالباقي
+    # يمكنك تحديد إصدار postgres إذا أردت
+    # postgresqlVersion: 15 
+
+  # 2. خدمة الويب (Node.js)
   - type: web
     name: restaurant-app
-    env: node
-    # plan: standard # يمكنك البدء بالخطة المجانية ثم الترقية
+    env: node # بيئة التشغيل هنا صحيحة
     
-    # أمر البناء: يتضمن تثبيت التبعيات ثم بناء المشروع
+    # أمر البناء: تثبيت التبعيات ثم بناء المشروع
     buildCommand: "pnpm install && pnpm run build"
     
     # أمر التشغيل: تشغيل الخادم
@@ -27,8 +23,7 @@ services:
         value: production
       - key: DATABASE_URL
         fromDatabase:
-          name: restaurant-db
+          name: restaurant-db # اسم الخدمة التي أنشأناها أعلاه
           property: connectionString
-      # يمكنك إضافة أي متغيرات أخرى هنا
       # - key: SECRET_KEY
-      #   generateValue: true # Render يمكنه إنشاء قيمة عشوائية آمنة لك
+      #   generateValue: true
