@@ -1,17 +1,19 @@
 services:
-  # 1. خدمة قاعدة البيانات (PostgreSQL) - بسيطة وبدون إعدادات بناء
+  # 1. خدمة قاعدة البيانات (PostgreSQL)
   - type: pserv
     name: restaurant-db
-    # لا تحتاج إلى أي حقول أخرى هنا، Render سيتكفل بالباقي
-    # يمكنك تحديد إصدار postgres إذا أردت
-    # postgresqlVersion: 15 
+    plan: standard 
+    disk:
+      name: postgres-data
+      sizeGB: 1
 
   # 2. خدمة الويب (Node.js)
   - type: web
     name: restaurant-app
-    env: node # بيئة التشغيل هنا صحيحة
+    env: node 
+    plan: standard
     
-    # أمر البناء: تثبيت التبعيات ثم بناء المشروع
+    # أمر البناء: دمج التثبيت والبناء في أمر واحد
     buildCommand: "pnpm install && pnpm run build"
     
     # أمر التشغيل: تشغيل الخادم
@@ -23,7 +25,7 @@ services:
         value: production
       - key: DATABASE_URL
         fromDatabase:
-          name: restaurant-db # اسم الخدمة التي أنشأناها أعلاه
+          name: restaurant-db
           property: connectionString
       # - key: SECRET_KEY
       #   generateValue: true
