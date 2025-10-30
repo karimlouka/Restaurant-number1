@@ -27,5 +27,3 @@ services:
         fromDatabase:
           name: restaurant-db
           property: connectionString
-      # - key: SECRET_KEY
-      #   generateValue: true
