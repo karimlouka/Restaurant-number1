@@ -1,48 +1,34 @@
 # render.yaml
-# هذا الملف هو مخطط Render Blueprint الذي يحدد جميع الخدمات المطلوبة
-# المشروع: Node.js/TypeScript Full-stack with Drizzle and PostgreSQL
+# ملف Render Blueprint مصحح لمشروع Node.js مع PostgreSQL
 
 services:
   # 1. خدمة قاعدة البيانات (PostgreSQL)
   - type: pserv
     name: restaurant-db
-    plan: standard # يفضل استخدام خطة Standard على Render لمشاريع الإنتاج
-    disk:
-      name: postgres-data
-      sizeGB: 1
-    # لتجنب بناء قاعدة البيانات في كل مرة يتم فيها تحديث الكود
-    autoDeploy: false 
-
+    # ملاحظة: خطة "free" متاحة وقد تكون كافية للتطوير
+    # plan: standard 
+    # autoDeploy: false # هذا الحقل غير صالح لـ pserv، يتم التحكم به من الواجهة
+    
   # 2. خدمة الويب (Backend + Frontend)
   - type: web
     name: restaurant-app
     env: node
-    plan: standard # يفضل استخدام خطة Standard
+    # plan: standard # يمكنك البدء بالخطة المجانية ثم الترقية
     
-    # أمر التثبيت: يجب استخدام pnpm لتثبيت التبعيات
-    # يجب أن يكون هذا الأمر هو أول ما يتم تنفيذه
-    installCommand: pnpm install
-    
-    # أمر البناء: بناء الواجهة الأمامية والخلفية
-    buildCommand: pnpm run build
+    # أمر البناء: يتضمن تثبيت التبعيات ثم بناء المشروع
+    buildCommand: "pnpm install && pnpm run build"
     
     # أمر التشغيل: تشغيل الخادم
-    startCommand: pnpm run start
+    startCommand: "pnpm run start"
     
     # متغيرات البيئة
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 10000 # Render يستخدم هذا المنفذ داخليًا
       - key: DATABASE_URL
         fromDatabase:
           name: restaurant-db
           property: connectionString
-      # متغيرات بيئة إضافية قد تحتاجها (مثل مفاتيح API أو متغيرات Drizzle)
+      # يمكنك إضافة أي متغيرات أخرى هنا
       # - key: SECRET_KEY
-      #   value: your_secret_key_here
-    
-    # ربط قاعدة البيانات بالخدمة
-    databases:
-      - name: restaurant-db
+      #   generateValue: true # Render يمكنه إنشاء قيمة عشوائية آمنة لك
